@@ -40,7 +40,7 @@ class KNN(Classifier):
         self.K = K
 
     def train(self, data):
-        self.computeClassP(data.data)
+        pass
     
     def classify(self, data):
         predictions = []
