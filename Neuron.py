@@ -7,8 +7,10 @@ class Neuron:
         self.activation_function = activation_function
         self.value = 0
         self.sumation = 0
+        self.sumation_backpropagation = 0
         self.connections = []
         self.in_input_layer = in_input_layer
+        self.delta = 0
         
         Neuron.neurons += 1
         self.id = Neuron.neurons
@@ -19,14 +21,14 @@ class Neuron:
     
     def connectLayer(self, layer):
         for layerNeuron in layer.neurons:
-            connection = Connection(self, layerNeuron, 1)
+            connection = Connection(self, layerNeuron)
             self.connections.append(connection)
     
     def shoot(self):
         # Setting our value
         if not self.in_input_layer:
-            print(self.sumation)
             self.value = self.activation_function(self.sumation)
+            self.sumation_backpropagation = self.sumation
             self.sumation = 0
         
         # Shooting in every connection
@@ -34,4 +36,4 @@ class Neuron:
             connection.shoot()
     
     def __str__(self) -> str:
-        return "Neuron "+str(self.id)
+        return "Neuron "+str(self.id)+" - [delta: " + str(self.delta) + "]"

@@ -1,11 +1,11 @@
-
+from random import uniform
 
 class Connection:
     
-    def __init__(self, starting_neuron, ending_neuron, value):
+    def __init__(self, starting_neuron, ending_neuron):
         self.starting_neuron = starting_neuron
         self.ending_neuron = ending_neuron
-        self.value = value
+        self.value = uniform(-1, 1)
     
     def shoot(self):
         result = self.value*self.starting_neuron.value
