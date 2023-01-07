@@ -1,7 +1,9 @@
 from Layer import Layer
 import numpy as np
+from Data import Data
+from Classifier import Classifier
 
-class NeuralNetwork:
+class NeuralNetwork(Classifier):
     
     def __init__(self, shape, activation_function, derivative_activation_function, learning_rate):
         self.layers = []
@@ -13,6 +15,26 @@ class NeuralNetwork:
             
             if i != 0:
                 self.layers[i-1].connectLayer(layer)
+    
+    def train(self, data, epochs=1000):
+        for _ in range(epochs):
+            for trainRow in data.data:
+                row = list(trainRow[:-1])
+                row.append(1)
+                nn.shoot(row)
+                nn.backpropagation(trainRow[-1])
+
+    def classify(self, data):
+        predictions = []
+        for testRow in data.data:
+            row = list(testRow[:-1])
+            row.append(1)
+            
+            prediction = self.shoot(row)
+            predictions.append(1 if prediction > 0.5 else 0)
+        print(predictions)
+        
+        return predictions
     
     def shoot(self, values):
         # Setting the value in the first layer
@@ -76,45 +98,9 @@ def sigmoid(x):
 def derivative_sigmoid(x):
     return sigmoid(x)*(1-sigmoid(x))
 
-nn = NeuralNetwork((3, 1), sigmoid, derivative_sigmoid, 1)
+nn = NeuralNetwork((3, 2, 2, 1), sigmoid, derivative_sigmoid, 1)
+d = Data("data2.csv")
+nn.train(d, 1000)
+predictions = nn.classify(d)
 
-result = nn.shoot([1, 1, 1])
-print("Result [1, 1, 1]: ", result)
-
-result = nn.shoot([0, 1, 1])
-print("Result [0, 1, 1]: ", result)
-
-result = nn.shoot([1, 0, 1])
-print("Result [1, 0, 1]: ", result)
-
-result = nn.shoot([0, 0, 1])
-print("Result [0, 0, 1]: ", result)
-
-print("----------------------------------")
-
-for _ in range(10000):
-    result = nn.shoot([1, 1, 1])
-    nn.backpropagation(1)
-    
-    result = nn.shoot([0, 1, 1])
-    nn.backpropagation(0)
-    
-    result = nn.shoot([1, 0, 1])
-    nn.backpropagation(0)
-    
-    result = nn.shoot([0, 0, 1])
-    nn.backpropagation(0)
-
-result = nn.shoot([1, 1, 1])
-print("Result [1, 1]: ", result)
-
-result = nn.shoot([1, 0, 1])
-print("Result [1, 0]: ", result)
-
-result = nn.shoot([0, 1, 1])
-print("Result [0, 1]: ", result)
-
-result = nn.shoot([0, 0])
-print("Result [0, 0]: ", result)
-
-print(nn)
+print(nn.error(predictions, d))
